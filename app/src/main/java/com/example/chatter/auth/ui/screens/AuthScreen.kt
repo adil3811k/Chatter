@@ -21,10 +21,18 @@ fun AuthScreen() {
     val context= LocalContext.current as ComponentActivity
     NavHost(navController =  navController , startDestination = SigIn){
         composable<SigIn>{
-            SignScreen(isLoading = isLoading.value,navHostController =  navController, onSigIn = {email , password -> viewmodel.Singing(context, email , password)})
+            SignScreen(
+                isLoading = isLoading.value,
+                navHostController =  navController,
+                onSigIn = {email , password -> viewmodel.Singing(context, email , password)},
+                googleSignIn = {viewmodel.googleSigin(it)}
+            )
         }
         composable<Singup>{
-            SignUpScreen(isLoading = isLoading.value , onSigUp = {email  , password-> viewmodel.SignUp( context, email , password)})
+            SignUpScreen(
+                isLoading = isLoading.value ,
+                onSigUp = {email  , password-> viewmodel.SignUp( context, email , password)}
+            )
         }
     }
 
