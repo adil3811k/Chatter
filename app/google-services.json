@@ -1,8 +1,9 @@
 {
   "project_info": {
     "project_number": "658116732531",
+    "firebase_url": "https://chatterapp-3b2e4-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "chatterapp-3b2e4",
-    "storage_bucket": "chatterapp-3b2e4.appspot.com"
+    "storage_bucket": "chatterapp-3b2e4.firebasestorage.app"
   },
   "client": [
     {
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "658116732531-t80vb0k3ktqqamf1a0rmanlil0214d0o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatter",
+            "certificate_hash": "6c8471244d9caefb7c6ed10bac8f772ad8370696"
+          }
+        },
         {
           "client_id": "658116732531-tqrffdoretmnefkmioobredhphld98hs.apps.googleusercontent.com",
           "client_type": 3

@@ -3,7 +3,6 @@ package com.example.chatter.auth.ui.viewmodel
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.mutableStateOf
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
@@ -16,9 +15,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 import com.example.chatter.R
+import com.example.chatter.modul.User
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 
 @HiltViewModel
@@ -45,6 +49,13 @@ class SigningSignOutViewModel @Inject constructor() : ViewModel(){
         isLoading.value = true
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email , password)
             .addOnSuccessListener{
+                val currentUser = FirebaseAuth.getInstance().currentUser
+                fireStore.document().set(User(
+                    name =  currentUser?.displayName ?: ("User" + Random.nextInt(99, 999)),
+                    uid =  currentUser?.uid?:"",
+                    email = email,
+                    createdAt =  Timestamp.now()
+                ))
                 isLoading.value = false
                 Toast.makeText(context , "User Created" , Toast.LENGTH_SHORT ).show()
                 context.startActivity(Intent(context , MainActivity::class.java))
@@ -61,7 +72,7 @@ class SigningSignOutViewModel @Inject constructor() : ViewModel(){
         val credentialManager  = CredentialManager.create(context)
         val googleOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(context.getString(R.string.default_web_client_id))
+            .setServerClientId(context.getString(R.string.Server_clint_id))
             .build()
         val request = GetCredentialRequest.Builder()
             .addCredentialOption(googleOption)
@@ -82,6 +93,13 @@ class SigningSignOutViewModel @Inject constructor() : ViewModel(){
         )
         FirebaseAuth.getInstance().signInWithCredential(firebaseCredential)
             .addOnSuccessListener{
+                val currentUser = FirebaseAuth.getInstance().currentUser
+                fireStore.document().set(User(
+                    name =  currentUser?.displayName ?: ("User" + Random.nextInt(99, 999)),
+                    uid =  currentUser?.uid?:"",
+                   email =  currentUser?.email,
+                    createdAt =  Timestamp.now()
+                ))
                 isLoading.value = false
                 Toast.makeText(context , "User Created" , Toast.LENGTH_SHORT ).show()
                 context.startActivity(Intent(context , MainActivity::class.java))
@@ -91,5 +109,8 @@ class SigningSignOutViewModel @Inject constructor() : ViewModel(){
                 Toast.makeText(context , it.message , Toast.LENGTH_SHORT ).show()
                 isLoading.value = false
             }
+    }
+    companion object{
+        val fireStore = Firebase.firestore.collection("Users")
     }
 }
