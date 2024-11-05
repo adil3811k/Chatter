@@ -11,7 +11,12 @@ object Singup
 @Serializable
 object HomeScreen
 
+@Serializable
+data class ChatScreen(val id:String)
 
 
 @Serializable
-data class ChatScreen(val id:String)
+object GroupsList
+
+@Serializable
+data class GroupChats(val id: String)

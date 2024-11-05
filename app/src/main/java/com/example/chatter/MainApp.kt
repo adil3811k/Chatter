@@ -1,8 +1,6 @@
 package com.example.chatter
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Group
@@ -14,7 +12,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -23,7 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.chatter.group.screen.GroupCom
 import com.example.chatter.home.screen.HomeScreen
+import com.example.chatter.profile.screen.Profilecom
 
 
 private data class TopLevelRoute(val name: String, val icon: ImageVector)
@@ -89,19 +88,5 @@ fun MainApp(modifier: Modifier = Modifier) {
                 Profilecom()
             }
         }
-    }
-}
-
-@Composable
-fun Profilecom(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-        Text("Profile Screen")
-    }
-}
-
-@Composable
-fun GroupCom(modifier : Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-        Text("Group Screen")
     }
 }

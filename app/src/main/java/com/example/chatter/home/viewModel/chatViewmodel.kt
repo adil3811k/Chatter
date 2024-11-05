@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.chatter.modul.Message
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,8 +36,8 @@ class ChatViewmodel @Inject constructor() : ViewModel() {
         val myUid = FirebaseAuth.getInstance().uid?:""
         val collection = listOf<String>(myUid , uid).sorted().joinToString("_")
         Firebase.firestore.collection(collection)
-            .orderBy("createdAt")
-            .addSnapshotListener { snapshort, error ->
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener {snapshort, error ->
                 if (error != null) {
 
                     return@addSnapshotListener

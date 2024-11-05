@@ -50,12 +50,10 @@ fun ChatScreenCom(
 ) {
     val viewModel  = hiltViewModel<ChatViewmodel>()
     val state  = viewModel.state.collectAsStateWithLifecycle()
-
     LaunchedEffect(Unit) {
         viewModel.setListner(uid)
         Log.d("Firebase" ,"Listener attach")
     }
-
     Column(
         modifier = modifier.fillMaxSize()
     ){
@@ -63,7 +61,8 @@ fun ChatScreenCom(
             modifier = modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(bottom = 5.dp, top = 5.dp)
+            contentPadding = PaddingValues(bottom = 5.dp, top = 5.dp),
+            reverseLayout = true
         ){
             items(state.value){message->
                 MessageBubble(message)
@@ -89,7 +88,8 @@ fun MessageBubble(
     val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
     Box(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(8.dp),
         contentAlignment = if (isCurrentUser) Alignment.BottomEnd else Alignment.BottomStart
     ){
         Row (
@@ -102,28 +102,28 @@ fun MessageBubble(
                 fontSize = 14.sp,
                 color = TextColor,
                 modifier = modifier
-                    .padding(start =  5.dp , top = 12.dp, bottom = 12.dp)
+                    .padding(start =  8.dp , top = 8.dp, bottom = 8.dp, end = 8.dp)
             )
             Text(
                 text = sdf.format(message.createdAt.toDate()),
                 fontSize = 10.sp,
                 color = TextColor,
                 modifier = modifier
-                    .padding(end =  5.dp, top = 12.dp , bottom = 12.dp)
+                    .padding(end =  5.dp, top = 8.dp , bottom = 8.dp)
             )
         }
     }
 }
 // this is composable for enter massage and send
 @Composable
-private fun EnterMessageCom(
+ fun EnterMessageCom(
     modifier: Modifier = Modifier,
     onSend:(String)-> Unit
 ) {
     var message by remember { mutableStateOf("") }
     Row(
         modifier = modifier
-            .padding(start = 20.dp, end = 20.dp)
+            .padding(start = 12.dp, end = 12.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ){

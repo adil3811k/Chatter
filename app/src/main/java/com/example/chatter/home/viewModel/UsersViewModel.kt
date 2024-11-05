@@ -22,9 +22,8 @@ class UsersViewModel @Inject constructor() : ViewModel() {
     init {
         addListner()
     }
-
     private fun addListner(){
-        users.whereNotEqualTo("uid" , FirebaseAuth.getInstance().currentUser?.uid)
+        users.whereNotEqualTo("uid" , FirebaseAuth.getInstance().currentUser?.uid?:"")
             .addSnapshotListener{snapshot, error->
                 if (error!=null){
                     Log.d("Firebase FireStore", error.message.toString())

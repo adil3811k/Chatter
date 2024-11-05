@@ -83,5 +83,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.7.4")
     implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc02")
 
+    //Splash screen dependency
+    implementation("androidx.core:core-splashscreen:1.0.0")
 
 }

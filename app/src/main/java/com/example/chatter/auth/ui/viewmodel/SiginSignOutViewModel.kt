@@ -50,7 +50,7 @@ class SigningSignOutViewModel @Inject constructor() : ViewModel(){
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email , password)
             .addOnSuccessListener{
                 val currentUser = FirebaseAuth.getInstance().currentUser
-                fireStore.document().set(User(
+                fireStore.document(currentUser?.uid?:"").set(User(
                     name =  currentUser?.displayName ?: ("User" + Random.nextInt(99, 999)),
                     uid =  currentUser?.uid?:"",
                     email = email,
@@ -82,19 +82,19 @@ class SigningSignOutViewModel @Inject constructor() : ViewModel(){
                 context = context,
                 request = request
             )
-            singinWithCredintials(context , result.credential)
+            singingWithCredential(context , result.credential)
         }
     }
-    private fun singinWithCredintials(context: ComponentActivity , credential: Credential){
-        val googelCredential = GoogleIdTokenCredential.createFrom(credential.data)
+    private fun singingWithCredential(context: ComponentActivity, credential: Credential){
+        val googleCredential = GoogleIdTokenCredential.createFrom(credential.data)
         val firebaseCredential = GoogleAuthProvider.getCredential(
-            googelCredential.idToken,
+            googleCredential.idToken,
             null
         )
         FirebaseAuth.getInstance().signInWithCredential(firebaseCredential)
             .addOnSuccessListener{
                 val currentUser = FirebaseAuth.getInstance().currentUser
-                fireStore.document().set(User(
+                fireStore.document(FirebaseAuth.getInstance().currentUser?.uid?:"").set(User(
                     name =  currentUser?.displayName ?: ("User" + Random.nextInt(99, 999)),
                     uid =  currentUser?.uid?:"",
                    email =  currentUser?.email,
