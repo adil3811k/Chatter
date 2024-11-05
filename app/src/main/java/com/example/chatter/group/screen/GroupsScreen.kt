@@ -18,13 +18,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -38,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -83,27 +87,50 @@ private fun GroupsChat(
     modifier: Modifier = Modifier
 ) {
     val state by viewmodel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewmodel.setChatListener(id)
     }
-    Column(
-        modifier = modifier.fillMaxSize()
-    ){
-        LazyColumn(
-            modifier = modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            contentPadding = PaddingValues(bottom = 5.dp, top = 5.dp),
-            reverseLayout = true
-        ){
-            items(state.groupchats){groupsChat->
-                GroupMessageBubble(groupsChat)
-            }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {Text("Group")},
+                actions = {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        IconButton({
+                            viewmodel.copyID(context , id)
+                        }) {
+                            Icon(Icons.Default.ContentCopy, "Copy Icon")
+                        }
+                        Text("Copy group id", modifier = modifier.padding(top = 12.dp))
+                    }
+                }
+            )
         }
-        EnterMessageCom(
-            modifier =  modifier.fillMaxWidth()
-        ) {message->
-            viewmodel.sendMessage(message ,id)
+    ) {paddinvalue->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddinvalue)
+        ){
+            LazyColumn(
+                modifier = modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentPadding = PaddingValues(bottom = 5.dp, top = 5.dp),
+                reverseLayout = true
+            ){
+                items(state.groupchats){groupsChat->
+                    GroupMessageBubble(groupsChat)
+                }
+            }
+            EnterMessageCom(
+                modifier =  modifier.fillMaxWidth()
+            ) {message->
+                viewmodel.sendMessage(message ,id)
+            }
         }
     }
 }
@@ -125,7 +152,7 @@ private fun Groups(
         },
         topBar = {
             TopAppBar(
-                title = {Text("Group")}
+                title = {Text("Group")},
             )
         }
     ){ paddinvalue->
@@ -185,7 +212,6 @@ private fun GroupDialog(
     onDismiss: () -> Unit,
     onCreate: (String , String) -> Unit,
     onJoin:(String)-> Unit,
-    modifier: Modifier = Modifier
 ) {
     val IsJoining = remember { mutableStateOf(true) }
     val name = remember { mutableStateOf("") }
@@ -274,25 +300,38 @@ fun GroupMessageBubble(
             .padding(8.dp),
         contentAlignment = if (isCurrentUser) Alignment.BottomEnd else Alignment.BottomStart
     ){
-        Row (
+        Column(
             modifier = modifier
                 .clip(RoundedCornerShape(20))
                 .background(Color),
-        ){
+        ) {
             Text(
-                text = message.text ?: "Null",
-                fontSize = 14.sp,
+                text =  message.senderName?:"",
+                fontSize = 8.sp,
                 color = TextColor,
                 modifier = modifier
-                    .padding(start =  8.dp , top = 8.dp, bottom = 8.dp, end = 8.dp)
+                    .padding(start =  8.dp , top = 8.dp, end = 8.dp)
             )
-            Text(
-                text = sdf.format(message.createdAt.toDate()),
-                fontSize = 10.sp,
-                color = TextColor,
-                modifier = modifier
-                    .padding(end =  5.dp, top = 8.dp , bottom = 8.dp)
-            )
+            Row{
+                SelectionContainer(
+                    modifier = modifier
+                        .padding(start =  8.dp, bottom = 8.dp, end = 8.dp)
+                ) {
+                    Text(
+                        text = message.text ?: "Null",
+                        fontSize = 14.sp,
+                        color = TextColor,
+
+                    )
+                }
+                Text(
+                    text = sdf.format(message.createdAt.toDate()),
+                    fontSize = 10.sp,
+                    color = TextColor,
+                    modifier = modifier
+                        .padding(end =  5.dp, top = 8.dp , bottom = 8.dp)
+                )
+            }
         }
     }
 }

@@ -1,6 +1,10 @@
 ﻿package com.example.chatter.group.viewModel
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatter.modul.Group
@@ -9,6 +13,7 @@ import com.example.chatter.modul.User
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -70,12 +75,37 @@ class GroupViewModel: ViewModel() {
             )
         }
         }
-    fun sendMessage(text: String, uid: String){
-
+    fun sendMessage(text: String, id: String){
+        viewModelScope.launch{
+            val currentUser = FirebaseAuth.getInstance().uid.getUserByUid()
+            val message = GroupsChat(currentUser?.name , currentUser?.uid , text , Timestamp.now())
+            Firebase.firestore.collection("Group")
+                .document(id)
+                .collection("Chat")
+                .document()
+                .set(message)
+        }
     }
 
     fun setChatListener(id: String){
-
+        Firebase.firestore.collection("Group")
+            .document(id)
+            .collection("Chat")
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener{snapshot , error->
+                if (error!=null){
+                    Log.d("Firebase", error.message?:"Error")
+                    return@addSnapshotListener
+                }
+                if (snapshot!=null){
+                    val list = snapshot.toObjects(GroupsChat::class.java)
+                    _state.update {
+                        it.copy(
+                            groupchats = list
+                        )
+                    }
+                }
+            }
     }
 
     fun joinGroup(groupId: String){
@@ -112,6 +142,17 @@ class GroupViewModel: ViewModel() {
             return user
         }else{
             return null
+        }
+    }
+    fun copyID(context:Context, text: String){
+        try {
+            val clipboardManager = context.getSystemService(ClipboardManager::class.java)
+            val clipdata = ClipData.newPlainText("id of group", text)
+            clipboardManager.setPrimaryClip(clipdata)
+            clipboardManager.setPrimaryClip(clipdata)
+            Toast.makeText(context , "Group id copy success full", Toast.LENGTH_SHORT).show()
+        }catch (e: Exception){
+            Toast.makeText(context , "Group id not copy ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 }

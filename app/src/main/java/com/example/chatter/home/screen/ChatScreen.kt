@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
@@ -97,13 +98,16 @@ fun MessageBubble(
                 .clip(RoundedCornerShape(20))
                 .background(Color),
         ){
-            Text(
-                text = message.text ?: "Null",
-                fontSize = 14.sp,
-                color = TextColor,
+            SelectionContainer(
                 modifier = modifier
                     .padding(start =  8.dp , top = 8.dp, bottom = 8.dp, end = 8.dp)
-            )
+            ) {
+                Text(
+                    text = message.text ?: "Null",
+                    fontSize = 14.sp,
+                    color = TextColor,
+                )
+            }
             Text(
                 text = sdf.format(message.createdAt.toDate()),
                 fontSize = 10.sp,
