@@ -12,6 +12,7 @@ import com.example.chatter.ui.theme.ChatterTheme
 import com.example.chatter.R
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.chatter.MainActivity
 import com.example.chatter.auth.ui.screens.AuthScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -19,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AuthActivity : ComponentActivity() {
-
     override fun onStart() {
         super.onStart()
         if (FirebaseAuth.getInstance().currentUser != null) {
@@ -31,10 +31,13 @@ class AuthActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        installSplashScreen()
         setContent {
             ChatterTheme(dynamicColor = false) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AuthScreen()
+                    ChatterTheme {
+                        AuthScreen()
+                    }
                 }
             }
         }

@@ -2,4 +2,9 @@
 <resources>
 
     <style name="Theme.Chatter" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="theme.app.splashscreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="windowSplashScreenAnimatedIcon" >@drawable/logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.Chatter</item>
+    </style>
 </resources>

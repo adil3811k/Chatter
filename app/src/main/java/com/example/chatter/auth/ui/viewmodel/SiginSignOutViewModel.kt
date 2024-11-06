@@ -69,6 +69,7 @@ class SigningSignOutViewModel @Inject constructor() : ViewModel(){
 
     fun googleSigin(context: ComponentActivity){
         isLoading.value = true
+        try {
         val credentialManager  = CredentialManager.create(context)
         val googleOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
@@ -77,38 +78,51 @@ class SigningSignOutViewModel @Inject constructor() : ViewModel(){
         val request = GetCredentialRequest.Builder()
             .addCredentialOption(googleOption)
             .build()
-        viewModelScope.launch{
-            val result = credentialManager.getCredential(
-                context = context,
-                request = request
-            )
-            singingWithCredential(context , result.credential)
+            viewModelScope.launch {
+                try {
+                    val result = credentialManager.getCredential(
+                        context = context,
+                        request = request
+                    )
+                    singingWithCredential(context, result.credential)
+                } catch (e: Exception) {
+                    // Handle cancellation gracefully
+                    Toast.makeText(context, "Sign-In canceled: ${e.message}", Toast.LENGTH_SHORT).show()
+                    isLoading.value = false
+                }
+            }
+        }catch (e: Exception){
+            Toast.makeText(context, "error ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
     private fun singingWithCredential(context: ComponentActivity, credential: Credential){
-        val googleCredential = GoogleIdTokenCredential.createFrom(credential.data)
-        val firebaseCredential = GoogleAuthProvider.getCredential(
-            googleCredential.idToken,
-            null
-        )
-        FirebaseAuth.getInstance().signInWithCredential(firebaseCredential)
-            .addOnSuccessListener{
-                val currentUser = FirebaseAuth.getInstance().currentUser
-                fireStore.document(FirebaseAuth.getInstance().currentUser?.uid?:"").set(User(
-                    name =  currentUser?.displayName ?: ("User" + Random.nextInt(99, 999)),
-                    uid =  currentUser?.uid?:"",
-                   email =  currentUser?.email,
-                    createdAt =  Timestamp.now()
-                ))
-                isLoading.value = false
-                Toast.makeText(context , "User Created" , Toast.LENGTH_SHORT ).show()
-                context.startActivity(Intent(context , MainActivity::class.java))
-                context.finish()
-            }
-            .addOnFailureListener{
-                Toast.makeText(context , it.message , Toast.LENGTH_SHORT ).show()
-                isLoading.value = false
-            }
+        try {
+            val googleCredential = GoogleIdTokenCredential.createFrom(credential.data)
+            val firebaseCredential = GoogleAuthProvider.getCredential(
+                googleCredential.idToken,
+                null
+            )
+            FirebaseAuth.getInstance().signInWithCredential(firebaseCredential)
+                .addOnSuccessListener{
+                    val currentUser = FirebaseAuth.getInstance().currentUser
+                    fireStore.document(FirebaseAuth.getInstance().currentUser?.uid?:"").set(User(
+                        name =  currentUser?.displayName ?: ("User" + Random.nextInt(99, 999)),
+                        uid =  currentUser?.uid?:"",
+                        email =  currentUser?.email,
+                        createdAt =  Timestamp.now()
+                    ))
+                    isLoading.value = false
+                    Toast.makeText(context , "User Created" , Toast.LENGTH_SHORT ).show()
+                    context.startActivity(Intent(context , MainActivity::class.java))
+                    context.finish()
+                }
+                .addOnFailureListener{
+                    Toast.makeText(context , it.message , Toast.LENGTH_SHORT ).show()
+                    isLoading.value = false
+                }
+        }catch (e: Exception){
+            Toast.makeText(context, "error is ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
     companion object{
         val fireStore = Firebase.firestore.collection("Users")
