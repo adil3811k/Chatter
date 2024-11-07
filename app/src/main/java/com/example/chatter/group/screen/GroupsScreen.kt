@@ -173,6 +173,7 @@ private fun Groups(
             },
             onJoin = {groupId->
                 groupViewModel.joinGroup(groupId)
+                isDialogOpen = false
             },
         )
     }
