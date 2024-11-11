@@ -13,15 +13,15 @@ You can intall the letest versioon of this app of this app form going to Relaes 
 
 ## Screen short
 <p float = "left">
-<image src =  "image/singin.jpg" height = "200">
+<image src =  "Image/singin.jpg" height = "200"/>
 </p>
 <p>
-<image src =  "image/dark_privet_chat.jpg" height = "200">
-<image src =  "image/light_privet_chat.jpg" height = "200">
+<image src =  "Image/dark_privet_chat.jpg" height = "200"/>
+<image src =  "Image/light_privet_chat.jpg" height = "200"/>
 </p>
 <p float = "left">
-<image src =  "image/dark_home.jpg" height = "200">
-<image src =  "image/light_home.jpg" height = "200">
+<image src =  "Image/dark_home.jpg" height = "200"/>
+<image src =  "Image/light_home.jpg" height = "200"/>
 </p>
 
 ### for more screen short you can go to image directory.
